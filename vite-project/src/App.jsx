@@ -6,10 +6,12 @@ import NewsPage from './pages/NewsPage';
 import ArticlePage from './pages/ArticlePage';
 import ArticleListPage from './pages/ArticleListPage';
 import Layout from './Layout';
+import PageNotFoundPage from './pages/PageNotFoundPage';
 
 const routes = [{ 
   path: '/',
   element: <Layout/>,
+  errorElement: <PageNotFoundPage/>,
   children: [{ 
     path: '/',
     element: <Homepage/>
