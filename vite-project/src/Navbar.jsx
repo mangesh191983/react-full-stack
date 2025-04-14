@@ -8,8 +8,8 @@ export default function Navbar() {
                     <Link to ='/'>Home</Link>
                 </li>
                 <li>
-                    <Link to ='/articles'>Articles</Link>
-                </li>
+                    <Link to ='/articles_list'>Articles</Link>
+                </li>                
                 <li>
                     <Link to ='/news'>News</Link>
                 </li>

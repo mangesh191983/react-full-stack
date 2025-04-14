@@ -2,11 +2,10 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './App.css'
 import Homepage from './pages/Homepage'
-import News from './pages/News';
-import Articles from './pages/Articles';
-import Navbar from './Navbar';
+import NewsPage from './pages/NewsPage';
+import ArticlePage from './pages/ArticlePage';
+import ArticleListPage from './pages/ArticleListPage';
 import Layout from './Layout';
-import { Children } from 'react';
 
 const routes = [{ 
   path: '/',
@@ -15,17 +14,17 @@ const routes = [{
     path: '/',
     element: <Homepage/>
   },
-  // { 
-  //   path: '/articles',
-  //   element: <Articles/>
-  // },
+  { 
+    path: '/articles_list',
+    element: <ArticleListPage/>
+  },
   { 
     path: '/articles/:name',
-    element: <Articles/>
+    element: <ArticlePage/>
   },
   { 
     path: '/news',
-    element: <News/>
+    element: <NewsPage/>
   }]  
 }];
 
