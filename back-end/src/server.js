@@ -5,16 +5,16 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/hello',function(req,res){
-    res.send('Hello from GET!');
-});
+const articleVote = [
+    {name:"learn-react", vote:0},
+    {name:"learn-node", vote:0},
+    {name:"mongodb", vote:0}
+]
 
-app.post('/hello',function(req,res){
-    res.send('Hello,'+ req.body.name + ' from POST!');
-});
-
-app.post('/hello/:name',function(req,res){
-    res.send('Hello,'+ req.params.name + ' from POST!');
+app.post('/api/article/:name/upvote',function(req,res){
+    const article = articleVote.find(a => a.name ===req.params.name);
+    article.vote++;
+    res.send("Article "+article.name+" total votes are "+article.vote);
 });
 
 app.listen(8000,function(){
