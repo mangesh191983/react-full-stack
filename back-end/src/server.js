@@ -1,9 +1,28 @@
 import express from 'express';
+import { MongoClient, ServerApiVersion } from 'mongodb';
 
 
 const app = express();
 
 app.use(express.json());
+app.get('/api/articles/:name',async (req,res)=>{
+    const {name} = req.params;
+    const uri ='mongodb://127.0.0.1:27017';
+    const client = new MongoClient(uri, {
+        serverApi:{
+            version: ServerApiVersion.v1,
+            strict: true,
+            deprecationErrors: true,
+        }
+    });
+
+    await client.connect();
+
+    const db = client.db('full-stack-react-db');
+    const article = await db.collection('articles').findOne( { name } );
+
+    res.json(article);
+}) 
 
 const articleVote = [
     {name:"learn-react", vote:0, comment:[]},
