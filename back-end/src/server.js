@@ -13,6 +13,10 @@ app.post('/hello',function(req,res){
     res.send('Hello,'+ req.body.name + ' from POST!');
 });
 
+app.post('/hello/:name',function(req,res){
+    res.send('Hello,'+ req.params.name + ' from POST!');
+});
+
 app.listen(8000,function(){
   console.log('Server is listening port 8000');
 });
