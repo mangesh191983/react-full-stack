@@ -1,12 +1,15 @@
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './App.css'
+import React from 'react';
+import axios from 'axios';
 import Homepage from './pages/Homepage'
 import NewsPage from './pages/NewsPage';
 import ArticlePage from './pages/ArticlePage';
 import ArticleListPage from './pages/ArticleListPage';
 import Layout from './Layout';
 import PageNotFoundPage from './pages/PageNotFoundPage';
+
 
 const routes = [{ 
   path: '/',
@@ -22,7 +25,12 @@ const routes = [{
   },
   { 
     path: '/articles/:name',
-    element: <ArticlePage/>
+    element: <ArticlePage/>,
+    loader: async function( { params } ){
+      const response = await axios.get('/api/articles/'+ params.name);
+      const { vote, comment } = response.data;
+      return { vote, comment };
+    }
   },
   { 
     path: '/news',

@@ -1,12 +1,14 @@
 import express from 'express';
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { MongoClient, ReturnDocument, ServerApiVersion } from 'mongodb';
 
 
 const app = express();
 
 app.use(express.json());
-app.get('/api/articles/:name',async (req,res)=>{
-    const {name} = req.params;
+
+let db;
+
+async function  connectToDb(){
     const uri ='mongodb://127.0.0.1:27017';
     const client = new MongoClient(uri, {
         serverApi:{
@@ -18,9 +20,11 @@ app.get('/api/articles/:name',async (req,res)=>{
 
     await client.connect();
 
-    const db = client.db('full-stack-react-db');
+    db = client.db('full-stack-react-db');
+}
+app.get('/api/articles/:name',async (req,res)=>{
+    const {name} = req.params;    
     const article = await db.collection('articles').findOne( { name } );
-
     res.json(article);
 }) 
 
@@ -30,20 +34,23 @@ const articleVote = [
     {name:"mongodb", vote:0, comment:[]}
 ]
 
-app.post('/api/article/:name/upvote',function(req,res){
-    const article = articleVote.find(a => a.name ===req.params.name);
-    article.vote++;
-    res.json(article);
-});
-
-app.post('/api/article/:name/comment',function(req,res){
+app.post('/api/article/:name/upvote',async function(req,res){
     const { name } = req.params;
-    const { postedBy, text } = req.body   
+    const updatedArticle = await db.collection('articles').findOneAndUpdate({ name }, { $inc: {vote:1} }, {returnDocument:'after'});
+   
+    res.json(updatedArticle);    
+});
 
-    const article = articleVote.find(a => a.name === name);
-    article.comment.push ({postedBy:postedBy,text:text});
+app.post('/api/article/:name/comment',async function(req,res){
+    const { name } = req.params;
+    const { postedBy, text } = req.body;
+    const newComment = { postedBy,text };
 
-    res.json(article);
+    const updatedArticle = await db.collection('articles').findOneAndUpdate({ name },
+         { $push: { comment: newComment } },
+         { returnDocument:'after' });   
+
+    res.json(updatedArticle);
 });
 
 app.post('/api/article/:name/upvote',function(req,res){
@@ -52,6 +59,12 @@ app.post('/api/article/:name/upvote',function(req,res){
     res.json(article);
 });
 
-app.listen(8000,function(){
-  console.log('Server is listening port 8000');
-});
+async function start() {
+    await connectToDb();
+    app.listen(8000,function(){
+        console.log('Server is listening port 8000');
+      });    
+}
+
+start();
+
