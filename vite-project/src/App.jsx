@@ -9,6 +9,8 @@ import ArticlePage from './pages/ArticlePage';
 import ArticleListPage from './pages/ArticleListPage';
 import Layout from './Layout';
 import PageNotFoundPage from './pages/PageNotFoundPage';
+import LoginPage from './pages/LoginPage';
+import CreateAccountPage from './pages/CreateAccountPage';
 
 
 const routes = [{ 
@@ -35,6 +37,14 @@ const routes = [{
   { 
     path: '/news',
     element: <NewsPage/>
+  },
+  { 
+    path: '/login',
+    element: <LoginPage></LoginPage>
+  },
+  { 
+    path: '/create-account',
+    element: <CreateAccountPage/>
   }]  
 }];
 

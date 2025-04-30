@@ -1,5 +1,16 @@
 import express from 'express';
 import { MongoClient, ReturnDocument, ServerApiVersion } from 'mongodb';
+import admin from 'firebase-admin';
+
+import fs from 'fs';
+
+const credentials = JSON.parse(
+ fs.readFileSync('./credentials.json')
+);
+
+admin.initializeApp({
+  credential: admin.credential.cert(credentials)
+});
 
 
 const app = express();
@@ -34,11 +45,36 @@ const articleVote = [
     {name:"mongodb", vote:0, comment:[]}
 ]
 
+app.use(async function(req, res, next){
+   const { authtoken } = req.headers;
+   if(authtoken){
+         const user = await admin.auth().verifyIdToken(authtoken);
+         req.user = user;
+         next();
+   } else{
+     res.sendStatus(400);
+   }
+});
+
 app.post('/api/article/:name/upvote',async function(req,res){
     const { name } = req.params;
-    const updatedArticle = await db.collection('articles').findOneAndUpdate({ name }, { $inc: {vote:1} }, {returnDocument:'after'});
+    const { uid } = req.user;
+
+    const articles = await db.collection.findOne({name});
+    const canUpvote = uid && !upvoteIds.includes(uid);
+
+    const upvoteIds = articles.upvoteIds || [];
+
+
+    if(canUpvote){
+    const updatedArticle = await db.collection('articles').findOneAndUpdate({ name }, { $inc: {vote:1}, $push:{ upvoteIds: uid } }, {returnDocument:'after'});
+
+    res.json(updatedArticle);  
+    }else{
+         res.sendStatus(403);
+    }
    
-    res.json(updatedArticle);    
+      
 });
 
 app.post('/api/article/:name/comment',async function(req,res){
